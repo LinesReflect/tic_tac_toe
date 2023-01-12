@@ -28,8 +28,13 @@ class Game
   def choose_placement
     puts "Choose where you would like to place a piece #{@@player_turn.name}!"
     placement = gets.chomp
-    @game_board.update_board(placement, @@player_turn.game_piece)
-    check_status
+    if spot_taken?(placement)
+      puts "That spot is taken, choose again"
+      choose_placement
+    else
+      @game_board.update_board(placement, @@player_turn.game_piece)
+      check_status
+    end
   end
 
   def switch_turns
@@ -45,6 +50,15 @@ class Game
       switch_turns
       choose_placement
     end
+  end
+
+  def spot_taken?(num)
+    num = num.to_i
+    num -= 1
+    if ["X", "O"].include?(@game_board.spots[num])
+      return true
+    end
+    return false
   end
 
   def player_won?
