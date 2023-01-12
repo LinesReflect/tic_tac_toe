@@ -8,11 +8,11 @@ class Board
   end
 
   def draw_board()
-    puts row_one = @spots[0..2].join(" | ")
+    puts @spots[0..2].join(" | ")
     puts row = "--+---+--"
-    puts row_two = @spots[3..5].join(" | ")
+    puts @spots[3..5].join(" | ")
     puts row
-    puts row_three = @spots[6..8].join(" | ")
+    puts @spots[6..8].join(" | ")
   end
 
   def update_board(num, player)
