@@ -39,6 +39,8 @@ class Game
   def check_status
     if player_won?
       puts "#{@@player_turn.name} is the winner!"
+    elsif player_draw?
+      puts "It's a draw!"
     else
       switch_turns
       choose_placement
@@ -60,5 +62,9 @@ class Game
       end
     end
     return false
+  end
+
+  def player_draw?
+    @game_board.spots.all? {|spot| spot == "X" || spot == "O"}
   end
 end
