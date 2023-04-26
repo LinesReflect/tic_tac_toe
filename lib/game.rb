@@ -13,52 +13,69 @@ class Game
   ]
   attr_accessor :game_board
 
-  def initialize(player1, player2)
+  def initialize(player1, player2, game_board: Board)
     @player1 = player1
     @player2 = player2
-    @@player_turn = @player1
-    @game_board = Board.new
+    @player_turn = @player1
+    @game_board = game_board.new
   end
 
   def begin_game
-    @game_board.draw_board
+    draw_board
+    play_game
+  end
+
+  def play_game
+    puts "Choose where you would like to place a piece #{@player_turn.name}!"
     choose_placement
+    check_status
+  end
+
+  def draw_board
+    @game_board.draw_board
   end
 
   def choose_placement
-    puts "Choose where you would like to place a piece #{@@player_turn.name}!"
-    placement = gets.chomp
-    if spot_taken?(placement)
-      puts "That spot is taken, choose again"
-      choose_placement
-    else
-      @game_board.update_board(placement, @@player_turn.game_piece)
-      check_status
+    loop do
+      spot = gets
+      spot = '' if spot.nil?
+      # spot.chomp
+      if !spot_taken?(spot)
+        @game_board.update_board(spot, @player_turn.game_piece)
+        break
+      end
+      
+      puts "That spot is taken, choose again!"
     end
   end
 
+  def player_placement
+    puts "Choose where you would like to place a piece #{@@player_turn.name}!"
+    gets.chomp
+  end
+
+
   def switch_turns
-    @@player_turn == @player1 ? @@player_turn = @player2 : @@player_turn = @player1
+    @player_turn == @player1 ? @player_turn = @player2 : @player_turn = @player1
   end
 
   def check_status
     if player_won?
-      puts "#{@@player_turn.name} is the winner!"
+      puts "#{@player_turn.name} is the winner!"
     elsif player_draw?
       puts "It's a draw!"
     else
       switch_turns
-      choose_placement
+      play_game
     end
   end
 
   def spot_taken?(num)
     num = num.to_i
     num -= 1
-    if ["X", "O"].include?(@game_board.spots[num])
-      return true
-    end
-    return false
+    return true if ["X", "O"].include?(@game_board.spots[num])
+
+    false
   end
 
   def player_won?
@@ -71,11 +88,9 @@ class Game
       spot_2 = @game_board.spots[placement_index_2]
       spot_3 = @game_board.spots[placement_index_3]
 
-      if spot_1 == spot_2 && spot_2 == spot_3
-        return true
-      end
+      return true if spot_1 == spot_2 && spot_2 == spot_3
     end
-    return false
+    false
   end
 
   def player_draw?
